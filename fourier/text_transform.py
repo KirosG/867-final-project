@@ -7,10 +7,10 @@ activities = {'Walking': 1,
 		'Upstairs': 5,
 		'Downstairs': 6 }
 
-f = open('WISDM_ar_v1.1_raw.txt', 'r')
+f = open('C:/NachumPC-Ofir/6.867/Project/WISDM_ar_v1.1/WISDM_ar_v1.1_raw.txt', 'r')
 #f = open('hi.txt', 'r')
 
-t = open('raw.txt', 'w')
+t = open('C:/NachumPC-Ofir/6.867/Project/WISDM_ar_v1.1/raw.txt', 'w')
 
 for line in f:
 	if len(line)>=5:
