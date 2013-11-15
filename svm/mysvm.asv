@@ -1,0 +1,13 @@
+function [svmstruct, training_error, test_error] = mysvm(data, v) 
+options = optimset('maxiter',15000);
+n = size(data, 1);
+num_train = floor(v*n);
+permdata=data(randperm(n),:);
+%permdata(:,2) = (permdata(:,2) == 1);
+training = permdata(1:num_train,:);
+testing = permdata((1+num_train):end,:);
+svmstruct = multisvm(training(:,3:end),training(:,2), options);
+train = multisvmclassify(svmstruct,training(:,3:end));
+test = multisvmclassify(svmstruct,testing(:,3:end));
+training_error = sum(train ~= training(:,2)) / num_train;
+test_error = sum(test ~= testing(:,2)) / (n-num_train);
