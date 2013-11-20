@@ -20,7 +20,7 @@ def load_fourier():
     return X,y
 
 def load_time():
-    data = np.loadtxt("../statistics/stats.txt", delimiter=",")
+    data = np.loadtxt("../statistics/stats.txt", delimiter=",", skiprows=1)
     X = []
     y = []
     # for row in data:
@@ -28,9 +28,8 @@ def load_time():
     #     y.append(row[1])
     #     X.append(row[2:])
     for row in data:
-        row = map(float, row)
-        y.append(row[1])
-        X.append(row[3:])
+        y.append(int(row[1]))
+        X.append(map(float, row[3:]))
 
     return X,y
 
@@ -45,7 +44,7 @@ def load_raw():
     #     X.append(row[2:])
     for row in data:
         row = map(float, row)
-        y.append(row[1])
-        X.append(row[3:])
+        y.append(int(row[1]))
+        X.append(map(float, row[3:]))
 
     return X,y
