@@ -1,30 +1,11 @@
 import data
 from sklearn.hmm import GaussianHMM
 import numpy as np
-from random import shuffle
 import utils
 
 
-def split_training(activities, num_training):
-    train = {}
-    test = {}
-
-
-    for a in activities:
-        shuffle(activities[a]) #shuffle so we train on a random subset
-        train[a] = activities[a][:num_training]
-        test[a] = activities[a][num_training:]
-
-    return train, test
-
 
 def train_hmm(X):
-    # print X[0].transpose().shape
-    #print len(X)
-    #print X[0]
-    #hmm = GaussianHMM(n_components=5, n_iter=1)
-    #hmm.fit(X);
-    #print hmm.score(X[0])
     hmm = GaussianHMM(n_components=8)
     hmm.fit(X);
     print hmm.score(X[0])
@@ -84,31 +65,12 @@ def test_error(test_activites, hmms):
     return incorrect/total
 
 if __name__ == "__main__":
-    X, y = data.load_raw()#data.load_time()
+    X, y = data.load_time()
 
 
-    #format data 
-    activities = {}
-    add = []
-    current_activity = y[0]
-    for row in zip(y,X):
-        activity = row[0]
-        # reached new activity
-        if current_activity != activity:
-            # add current activity
-            if current_activity not in activities:
-                activities[current_activity] = []
-            
-            if len(add) > 19:
-                activities[current_activity].append(np.array(add))
-            
-            #reset for next activity
-            add = []
-            current_activity = activity
-        print(len(row[1]))
-        add.append(row[1][0:3])
-
-    train, test = split_training(activities, 7)
+    activities = utils.format_data(X, y)
+    
+    train, test = utils.split_training(activities, .2)
 
     hmms = train_all_hmm(train)
 
