@@ -20,31 +20,43 @@ def load_fourier():
     return X,y
 
 def load_time():
-    data = np.loadtxt("../statistics/stats.txt", delimiter=",", skiprows=1)
+    data = np.loadtxt("../statistics/stats_quick2.txt", delimiter=",", skiprows=1)
     X = []
     y = []
+    user = []
     # for row in data:
     #     row = map(int, row)
     #     y.append(row[1])
     #     X.append(row[2:])
+    count = 0;
     for row in data:
+        user.append(int(row[0]));
         y.append(int(row[1]))
         X.append(map(float, row[3:]))
-
-    return X,y
+        count += 1
+    order = sorted(xrange(count), key=lambda i: user[i]);
+    #print order
+    return [X[i] for i in order],[y[i] for i in order]
+    #return X,y
 
 
 def load_raw():
     data = np.loadtxt("../fourier/raw.txt", delimiter=",")
     X = []
     y = []
+    user = []
     # for row in data:
     #     row = map(int, row)
     #     y.append(row[1])
     #     X.append(row[2:])
+    count = 0;
     for row in data:
         row = map(float, row)
+        user.append(int(row[0]));
         y.append(int(row[1]))
         X.append(map(float, row[3:]))
-
-    return X,y
+        count += 1;
+    order = sorted(xrange(count), key=lambda i: user[i]);
+    #print order
+    return [X[i] for i in order],[y[i] for i in order]
+    #return X,y

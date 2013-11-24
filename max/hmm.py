@@ -20,17 +20,25 @@ def split_training(activities, num_training):
 
 def train_hmm(X):
     # print X[0].transpose().shape
-    print len(X)
-    print X[0]
-    hmm = GaussianHMM(n_components=5)
-    hmm.fit(X)
+    #print len(X)
+    #print X[0]
+    #hmm = GaussianHMM(n_components=5, n_iter=1)
+    #hmm.fit(X);
+    #print hmm.score(X[0])
+    hmm = GaussianHMM(n_components=8)
+    hmm.fit(X);
+    print hmm.score(X[0])
+    print np.shape(X[0])
     return hmm
 
 def train_all_hmm(activities):
     hmms = {}
     for a in activities:
         print "Training hmm for activity %s" % (a)
-        hmms[a] = train_hmm(activities[a])
+        hmms_a = train_hmm(activities[a]);
+        #for X in activities[a]:
+        #    hmms_a.append(train_hmm(X));
+        hmms[a] = hmms_a;
 
     return hmms
 
@@ -39,10 +47,12 @@ def classify_activity(a, hmms):
     best_activity = None
 
     for hmm in hmms:
-        score = hmms[hmm].score(a)
-        if best_score is None or score > best_score:
-            best_score = score
-            best_activity = hmm
+        #for hmm_a in hmms[hmm]:
+            #score = hmm_a.score(a)
+            score = hmms[hmm].score(a)
+            if best_score is None or score > best_score:
+                best_score = score
+                best_activity = hmm
 
     return best_activity
 
@@ -52,22 +62,29 @@ def test_error(test_activites, hmms):
 
     y_test = []
     y_pred = []
+    activity_error = [0]*(len(hmms)+1);
+    activity_count = [0]*(len(hmms)+1);
     for a in test_activites:
         for x in test_activites[a]:
             total += 1
+            activity_count[a] += 1;
             y_test.append(a)
             pred = classify_activity(x, hmms)
             y_pred.append(pred)
-            print pred
+            #print pred
             if a != pred:
                 incorrect += 1
+                activity_error[a] += 1;
+
+    for a in test_activites:
+        print "Activity " + str(a) + ": " + str(float(activity_error[a])/activity_count[a]);
 
     utils.show_confusion_matrix(y_test, y_pred)
     
     return incorrect/total
 
 if __name__ == "__main__":
-    X, y = data.load_time()
+    X, y = data.load_raw()#data.load_time()
 
 
     #format data 
@@ -82,16 +99,16 @@ if __name__ == "__main__":
             if current_activity not in activities:
                 activities[current_activity] = []
             
-            if len(add) > 5:
+            if len(add) > 19:
                 activities[current_activity].append(np.array(add))
             
             #reset for next activity
             add = []
             current_activity = activity
+        print(len(row[1]))
+        add.append(row[1][0:3])
 
-        add.append(row[1])
-
-    train, test = split_training(activities, 4)
+    train, test = split_training(activities, 7)
 
     hmms = train_all_hmm(train)
 
@@ -99,6 +116,10 @@ if __name__ == "__main__":
 
     print error
 
+    #for a in activities:
+    #    print "Activity " + str(a);
+    #    for array in activities[a]:
+    #        print np.shape(array);
     # # X = [np.array(x) for x in activities[2]]
     # print len(X), X[:2]
     # print train_hmm(X)
